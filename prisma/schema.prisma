@@ -1,12 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Adicione esta parte no seu arquivo schema.prisma
 generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+generator prisma_client_js {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -23,10 +22,12 @@ model User {
 }
 
 model Movie {
-  id      String    @id @default(uuid())
-  title   String
-  Vote    Vote[]
-  Comment Comment[]
+  id          String    @id @default(uuid())
+  title       String
+  totalPoints Int       @default(0)
+  numVotes    Int       @default(0)
+  Vote        Vote[]
+  Comment     Comment[]
 }
 
 model Vote {
@@ -35,7 +36,7 @@ model Vote {
   userId  String
   user    User   @relation(fields: [userId], references: [id])
   movieId String
-  move    Movie  @relation(fields: [movieId], references: [id])
+  movie   Movie  @relation(fields: [movieId], references: [id])
 
   @@unique([userId, movieId])
 }

@@ -19,8 +19,8 @@ export class MoviesService {
     return this.prisma.movie.findUnique({
       where: { id },
       include: {
-        votes: true,
-        comments: true,
+        Vote: true, 
+        Comment: true,
       }
     })
   }
