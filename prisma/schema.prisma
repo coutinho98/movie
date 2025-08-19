@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  discordId String    @unique
+  name      String
+  Vote      Vote[]
+  Comment   Comment[]
+}
+
+model Movie {
+  id      String    @id @default(uuid())
+  title   String
+  Vote    Vote[]
+  Comment Comment[]
+}
+
+model Vote {
+  id      String @id @default(uuid())
+  value   Int
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  movieId String
+  move    Movie  @relation(fields: [movieId], references: [id])
+
+  @@unique([userId, movieId])
+}
+
+model Comment {
+  id      String @id @default(uuid())
+  content String
+  movieId String
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
