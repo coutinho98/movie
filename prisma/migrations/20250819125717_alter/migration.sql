@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "public"."Vote" ALTER COLUMN "value" SET DATA TYPE DOUBLE PRECISION;

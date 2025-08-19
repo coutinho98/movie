@@ -10,6 +10,10 @@ export class UsersService {
     return this.prisma.user.create({ data: createUserDto });
   }
 
+  async findByDiscordId(discordId: string) {
+    return this.prisma.user.findUnique({where: {discordId}})
+  }
+  
   async findOne(discordId: string) {
     return this.prisma.user.findUnique({ where: { discordId } });
   }
