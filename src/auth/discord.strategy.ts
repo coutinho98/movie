@@ -1,34 +1,42 @@
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, Profile, StrategyOptions } from 'passport-discord';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
-export class AuthService {
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService,
-    ) { }
+export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
+    constructor(private authService: AuthService) {
+        const clientID = process.env.DISCORD_CLIENT_ID;
+        const clientSecret = process.env.DISCORD_CLIENT_SECRET;
+        const callbackURL = process.env.DISCORD_CALLBACK_URL;
 
-    async findOrCreateDiscordUser(profile: { discordId: string, name: string }) {
-        let user = await this.usersService.findByDiscordId(profile.discordId);
-        if (!user) {
-            user = await this.usersService.create(profile);
+        if (!clientID || !clientSecret || !callbackURL) {
+            throw new UnauthorizedException(
+                'Discord credentials are not defined in the .env file',
+            );
         }
-        return user;
-    }
 
-    async validateUser(name: string) {
-        const user = await this.usersService.findOne(name);
-        if (!user) {
-            throw new UnauthorizedException();
-        }
-        return user;
-    }
-
-    async login(user: any) {
-        const payload = { name: user.name, sub: user.id };
-        return {
-            access_token: this.jwtService.sign(payload),
+        const options: StrategyOptions = {
+            clientID: clientID,
+            clientSecret: clientSecret,
+            callbackURL: callbackURL,
+            scope: ['identify', 'email'],
         };
+        super(options);
+    }
+
+    async validate(
+        accessToken: string,
+        refreshToken: string,
+        profile: Profile,
+    ): Promise<any> {
+        const discordId = profile.id;
+        const name = profile.username || profile.global_name || 'Usuário Discord';
+
+        const user = await this.authService.findOrCreateDiscordUser({
+            discordId: discordId,
+            name: name,
+        });
+        return user;
     }
 }

@@ -5,7 +5,7 @@ import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Get('discord')
   @UseGuards(AuthGuard('discord'))
@@ -17,6 +17,13 @@ export class AuthController {
   async discordLoginCallback(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     const { access_token } = await this.authService.login(req.user);
     res.cookie('jwt', access_token, { httpOnly: true });
-    return { message: 'Login com Discord realizado com sucesso!' };
+
+    res.redirect('http://localhost:5173/movies');
+  }
+
+  @Get('status')
+  @UseGuards(AuthGuard('jwt'))
+  authStatus(@Req() req: any) {
+    return req.user;
   }
 }
