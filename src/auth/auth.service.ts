@@ -7,7 +7,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(name: string) {
     const user = await this.usersService.findOne(name);
@@ -17,10 +17,18 @@ export class AuthService {
     return user;
   }
 
+  async validateUserByDiscordId(discordId: string) {
+    const user = await this.usersService.findOne(discordId);
+    if (!user) {
+      throw new UnauthorizedException()
+    }
+    return user;
+  }
+
   async findOrCreateDiscordUser(profile: { discordId: string; name: string }) {
     let user = await this.usersService.findByDiscordId(profile.discordId);
     if (!user) {
-      const userName = profile.name || `User-${profile.discordId}`; 
+      const userName = profile.name || `User-${profile.discordId}`;
       user = await this.usersService.create({
         discordId: profile.discordId,
         name: userName,
@@ -30,7 +38,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { name: user.name, sub: user.id };
+    const payload = { name: user.name, sub: user.id, discordId: user.discordId };
     return {
       access_token: this.jwtService.sign(payload),
     };
