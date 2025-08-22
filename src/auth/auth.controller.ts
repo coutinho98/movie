@@ -26,4 +26,10 @@ export class AuthController {
   authStatus(@Req() req: any) {
     return req.user;
   }
+
+  @Get('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('jwt');
+    return { message: 'Logout realizado com sucesso' };
+  }
 }
