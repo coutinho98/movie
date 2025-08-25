@@ -17,6 +17,7 @@ model User {
   id        String    @id @default(uuid())
   discordId String    @unique
   name      String
+  avatarUrl String?
   Vote      Vote[]
   Comment   Comment[]
 }

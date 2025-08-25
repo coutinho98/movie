@@ -30,12 +30,24 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
         refreshToken: string,
         profile: Profile,
     ): Promise<any> {
+        console.log('Perfil do Discord recebido:', profile);
+        
         const discordId = profile.id;
         const name = profile.username || profile.global_name || 'Usuário Discord';
+        
+        // Lógica de fallback para gerar a URL do avatar
+        let avatarUrl: string | null = null;
+        if (profile.avatar) {
+          avatarUrl = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`;
+        } else {
+          // Se o avatar for nulo, tenta usar a URL padrão do Discord
+          avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(profile.discriminator) % 5}.png`;
+        }
 
         const user = await this.authService.findOrCreateDiscordUser({
             discordId: discordId,
             name: name,
+            avatarUrl: avatarUrl,
         });
         return user;
     }

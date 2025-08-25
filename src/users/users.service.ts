@@ -11,10 +11,17 @@ export class UsersService {
   }
 
   async findByDiscordId(discordId: string) {
-    return this.prisma.user.findUnique({where: {discordId}})
+    return this.prisma.user.findUnique({ where: { discordId } })
   }
-  
+
   async findOne(discordId: string) {
     return this.prisma.user.findUnique({ where: { discordId } });
+  }
+
+  async updateAvatar(discordId: string, avatarUrl: string | null) {
+    return this.prisma.user.update({
+      where: { discordId },
+      data: { avatarUrl },
+    });
   }
 }

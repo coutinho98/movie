@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -8,4 +8,8 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   discordId: string;
+
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string | null;
 }
