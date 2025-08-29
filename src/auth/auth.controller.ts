@@ -18,7 +18,7 @@ export class AuthController {
     const { access_token } = await this.authService.login(req.user);
     res.cookie('jwt', access_token, { httpOnly: true });
 
-    res.redirect('http://localhost:5173/');
+    res.redirect('https://moviefront-edvy.onrender.com/home');
   }
 
   @Get('status')
