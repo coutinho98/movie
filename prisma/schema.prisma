@@ -20,15 +20,20 @@ model User {
   avatarUrl String?
   Vote      Vote[]
   Comment   Comment[]
+  Movie     Movie[]
 }
 
 model Movie {
   id          String    @id @default(uuid())
   title       String
+  posterUrl   String?
+  tmdbId      Int?      @unique
   totalPoints Int       @default(0)
   numVotes    Int       @default(0)
   Vote        Vote[]
   Comment     Comment[]
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
 }
 
 model Vote {

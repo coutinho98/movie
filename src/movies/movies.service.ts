@@ -5,10 +5,21 @@ import { VoteDto } from './dto/vote.dto';
 
 @Injectable()
 export class MoviesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async create(createMovieDto: CreateMovieDto) {
-    return this.prisma.movie.create({ data: { title: createMovieDto.title } });
+  async create(createMovieDto: CreateMovieDto, userId: string) {
+    return this.prisma.movie.create({
+      data: {
+        title: createMovieDto.title,
+        posterUrl: createMovieDto.posterUrl,
+        tmdbId: createMovieDto.tmdbId,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
   }
 
   async findAll() {
@@ -25,8 +36,13 @@ export class MoviesService {
       where: { id },
       include: {
         Vote: true,
-        Comment: true,
+        Comment: { 
+          include: {
+            user: true,
+          }
+        },
       },
+
     });
 
     if (!movie) {
@@ -59,7 +75,7 @@ export class MoviesService {
           },
         },
       });
-      
+
       const averageScore = updatedMovie.numVotes > 0 ? updatedMovie.totalPoints / updatedMovie.numVotes : 0;
       const percentage = (averageScore / 10) * 100;
       return { ...updatedMovie, averageScore, percentage };
@@ -74,7 +90,7 @@ export class MoviesService {
   async remove(id: string) {
     await this.prisma.vote.deleteMany({ where: { movieId: id } });
     await this.prisma.comment.deleteMany({ where: { movieId: id } });
-    
+
     return this.prisma.movie.delete({
       where: { id },
     });

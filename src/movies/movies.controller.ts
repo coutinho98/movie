@@ -7,12 +7,15 @@ import { Request } from 'express';
 
 @Controller('movies')
 export class MoviesController {
-  constructor(private readonly moviesService: MoviesService) {}
+  constructor(private readonly moviesService: MoviesService) { }
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  create(@Body() createMovieDto: CreateMovieDto, @Req() req: any) {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return this.moviesService.create(createMovieDto, req.user.id);
   }
 
   @Get()

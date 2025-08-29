@@ -35,12 +35,10 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
         const discordId = profile.id;
         const name = profile.username || profile.global_name || 'Usuário Discord';
         
-        // Lógica de fallback para gerar a URL do avatar
         let avatarUrl: string | null = null;
         if (profile.avatar) {
           avatarUrl = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`;
         } else {
-          // Se o avatar for nulo, tenta usar a URL padrão do Discord
           avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(profile.discriminator) % 5}.png`;
         }
 

@@ -4,7 +4,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Injectable()
 export class CommentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createCommentDto: CreateCommentDto, userId: string) {
     const { movieId, content } = createCommentDto;
@@ -14,6 +14,9 @@ export class CommentsService {
         movieId,
         userId,
       },
+      include: {
+        user: true
+      }
     });
   }
 }

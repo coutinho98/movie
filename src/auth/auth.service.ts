@@ -35,7 +35,6 @@ export class AuthService {
         avatarUrl: profile.avatarUrl,
       });
     } else {
-      // Se o usuário já existe, atualize apenas a URL do avatar
       user = await this.usersService.updateAvatar(profile.discordId, profile.avatarUrl);
     }
     return user;
