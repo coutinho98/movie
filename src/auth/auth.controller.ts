@@ -16,7 +16,12 @@ export class AuthController {
   @UseGuards(AuthGuard('discord'))
   async discordLoginCallback(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     const { access_token } = await this.authService.login(req.user);
-    res.cookie('jwt', access_token, { httpOnly: true });
+    res.cookie('jwt', access_token, {
+      httpOnly: true,
+      secure: true, 
+      domain: '.onrender.com',
+      sameSite: 'lax', 
+    });
 
     res.redirect('https://moviefront-edvy.onrender.com/home');
   }
