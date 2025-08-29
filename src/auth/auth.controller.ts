@@ -20,7 +20,7 @@ export class AuthController {
       httpOnly: true,
       secure: true, 
       domain: '.onrender.com',
-      sameSite: 'lax', 
+      sameSite: 'none', 
     });
 
     res.redirect('https://moviefront-edvy.onrender.com/home');
