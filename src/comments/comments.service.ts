@@ -19,4 +19,18 @@ export class CommentsService {
       }
     });
   }
+
+  async findOne(id: string) {
+    return this.prisma.comment.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        movie: true,
+        history: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+  }
+
 }

@@ -16,7 +16,7 @@ export class AuthController {
   @UseGuards(AuthGuard('discord'))
   async discordLoginCallback(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     const { access_token } = await this.authService.login(req.user);
-    res.redirect(`https://moviefront-edvy.onrender.com/home?token=${access_token}`);
+    res.redirect(`http://localhost:5173/home?token=${access_token}`);
   }
 
   @Get('status')

@@ -53,6 +53,19 @@ model Comment {
   movie   Movie  @relation(fields: [movieId], references: [id])
   userId  String
   user    User   @relation(fields: [userId], references: [id])
+  updatedAt DateTime @updatedAt @default(now())
+  history CommentHistory[]
 
   @@map("comments")
+}
+
+
+model CommentHistory {
+  id String @id @default(uuid())
+  content String
+  createdAt DateTime @default(now())
+  commentId String
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@map("comment_history")
 }
