@@ -2,6 +2,10 @@
 /dist
 /node_modules
 /build
+node_modules
+dist
+.env
+prisma/migrations-lock.toml
 
 # Logs
 logs
