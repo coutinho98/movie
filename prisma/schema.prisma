@@ -9,17 +9,18 @@ generator prisma_client_js {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String    @id @default(uuid())
-  discordId String    @unique
-  name      String
-  avatarUrl String?
-  Vote      Vote[]
-  Comment   Comment[]
-  Movie     Movie[]
+  id           String        @id @default(uuid())
+  discordId    String        @unique
+  name         String
+  avatarUrl    String?
+  Vote         Vote[]
+  Comment      Comment[]
+  Movie        Movie[]
+  groups       Group[]       @relation("GroupOwner")
+  groupMembers GroupMember[]
 }
 
 model Movie {
@@ -33,6 +34,8 @@ model Movie {
   Comment     Comment[]
   userId      String
   user        User      @relation(fields: [userId], references: [id])
+  group       Group?    @relation(fields: [groupId], references: [id])
+  groupId     String?
 }
 
 model Vote {
@@ -47,25 +50,45 @@ model Vote {
 }
 
 model Comment {
-  id      String @id @default(uuid())
-  content String
-  movieId String
-  movie   Movie  @relation(fields: [movieId], references: [id])
-  userId  String
-  user    User   @relation(fields: [userId], references: [id])
-  updatedAt DateTime @updatedAt @default(now())
-  history CommentHistory[]
+  id        String           @id @default(uuid())
+  content   String
+  movieId   String
+  movie     Movie            @relation(fields: [movieId], references: [id])
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  updatedAt DateTime         @default(now()) @updatedAt
+  history   CommentHistory[]
 
   @@map("comments")
 }
 
-
 model CommentHistory {
-  id String @id @default(uuid())
-  content String
+  id        String   @id @default(uuid())
+  content   String
   createdAt DateTime @default(now())
   commentId String
-  comment Comment @relation(fields: [commentId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
 
   @@map("comment_history")
+}
+
+model Group {
+  id         String        @id @default(uuid())
+  name       String
+  inviteCode String        @unique
+  ownerId    String
+  owner      User          @relation("GroupOwner", fields: [ownerId], references: [id])
+  members    GroupMember[]
+  movies     Movie[]
+  createdAt  DateTime      @default(now())
+}
+
+model GroupMember {
+  id      String @id @default(uuid())
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
+  
+  @@unique([groupId, userId])
 }
